@@ -1,7 +1,7 @@
 // const Matter = require('matter-js');
 
 function mulberry32(a) {
-	return function() {
+	return function () {
 		let t = a += 0x6D2B79F5;
 		t = Math.imul(t ^ t >>> 15, t | 1);
 		t ^= t + Math.imul(t ^ t >>> 7, t | 61);
@@ -17,14 +17,14 @@ const {
 } = Matter;
 
 const wallPad = 64;
-const loseHeight = 84;
-const statusBarHeight = 48;
-const previewBallHeight = 32;
+const loseHeight = 144;
+const statusBarHeight = 64;
+const previewBallHeight = 48;
 const friction = {
-	friction: 0.006,
-	frictionStatic: 0.006,
-	frictionAir: 0,
-	restitution: 0.1
+	friction: 0.01,
+	frictionStatic: 0.01,
+	frictionAir: 0.001,
+	restitution: 0.5
 };
 
 const GameStates = {
@@ -78,16 +78,16 @@ const Game = {
 	},
 
 	fruitSizes: [
-		{ radius: 24,  scoreValue: 1,  img: './assets/img/circle0.png'  },
-		{ radius: 32,  scoreValue: 3,  img: './assets/img/circle1.png'  },
-		{ radius: 40,  scoreValue: 6,  img: './assets/img/circle2.png'  },
-		{ radius: 56,  scoreValue: 10, img: './assets/img/circle3.png'  },
-		{ radius: 64,  scoreValue: 15, img: './assets/img/circle4.png'  },
-		{ radius: 72,  scoreValue: 21, img: './assets/img/circle5.png'  },
-		{ radius: 84,  scoreValue: 28, img: './assets/img/circle6.png'  },
-		{ radius: 96,  scoreValue: 36, img: './assets/img/circle7.png'  },
-		{ radius: 128, scoreValue: 45, img: './assets/img/circle8.png'  },
-		{ radius: 160, scoreValue: 55, img: './assets/img/circle9.png'  },
+		{ radius: 24, scoreValue: 1, img: './assets/img/circle0.png' },
+		{ radius: 32, scoreValue: 3, img: './assets/img/circle1.png' },
+		{ radius: 40, scoreValue: 6, img: './assets/img/circle2.png' },
+		{ radius: 56, scoreValue: 10, img: './assets/img/circle3.png' },
+		{ radius: 64, scoreValue: 15, img: './assets/img/circle4.png' },
+		{ radius: 72, scoreValue: 21, img: './assets/img/circle5.png' },
+		{ radius: 84, scoreValue: 28, img: './assets/img/circle6.png' },
+		{ radius: 96, scoreValue: 36, img: './assets/img/circle7.png' },
+		{ radius: 128, scoreValue: 45, img: './assets/img/circle8.png' },
+		{ radius: 160, scoreValue: 55, img: './assets/img/circle9.png' },
 		{ radius: 192, scoreValue: 66, img: './assets/img/circle10.png' },
 	],
 	currentFruitSize: 0,
@@ -308,40 +308,35 @@ const render = Render.create({
 	}
 });
 
+const originalImageWidth = 400;  // Original image width
+const originalImageHeight = 80; // Original image height
+
+// Calculate the aspect ratio of the original image
+const aspectRatio = originalImageWidth / originalImageHeight; 
+
+// Calculate the desired width as a percentage of the screen width
+const buttonWidth = Game.width * 0.4; 
+
+// Calculate the height based on the desired width and aspect ratio
+const buttonHeight = buttonWidth / aspectRatio; 
+
 const menuStatics = [
-	Bodies.rectangle(Game.width / 2, Game.height * 0.4, 512, 512, {
-		isStatic: true,
-		render: { sprite: { texture: './assets/img/bg-menu.png' } },
-	}),
-
-	// Add each fruit in a circle
-	...Array.apply(null, Array(Game.fruitSizes.length)).map((_, index) => {
-		const x = (Game.width / 2) + 192 * Math.cos((Math.PI * 2 * index)/12);
-		const y = (Game.height * 0.4) + 192 * Math.sin((Math.PI * 2 * index)/12);
-		const r = 64;
-
-		return Bodies.circle(x, y, r, {
-			isStatic: true,
-			render: {
-				sprite: {
-					texture: `./assets/img/circle${index}.png`,
-					xScale: r / 1024,
-					yScale: r / 1024,
-				},
-			},
-		});
-	}),
-
-	Bodies.rectangle(Game.width / 2, Game.height * 0.75, 512, 96, {
-		isStatic: true,
-		label: 'btn-start',
-		render: { sprite: { texture: './assets/img/btn-start.png' } },
-	}),
+  Bodies.rectangle(Game.width / 2, Game.height * 0.5, buttonWidth, buttonHeight, {
+    isStatic: true,
+    label: 'btn-start',
+    render: { 
+      sprite: { 
+        texture: './assets/img/btn-start.png',
+        xScale: buttonWidth / originalImageWidth,  
+        yScale: buttonHeight / originalImageHeight
+      } 
+    },
+  }),
 ];
 
 const wallProps = {
 	isStatic: true,
-	render: { fillStyle: '#FFEEDB' },
+	render: { fillStyle: '#FFFFFF' },
 	...friction,
 };
 
@@ -369,8 +364,45 @@ const mouseConstraint = MouseConstraint.create(engine, {
 });
 render.mouse = mouse;
 
-Game.initGame();
+// const imagePaths = [
+//   './assets/img/circle0.png',
+//   './assets/img/circle1.png',
+//   './assets/img/circle2.png',
+//   './assets/img/circle3.png',
+//   './assets/img/circle4.png',
+//   './assets/img/circle5.png',
+//   './assets/img/circle6.png',
+//   './assets/img/circle7.png',
+//   './assets/img/circle8.png',
+//   './assets/img/circle9.png',
+//   './assets/img/circle10.png',
+//   './assets/img/pop.png',
+//   './assets/img/btn-start.png',
+//   // Add any other image paths here, like './assets/img/bg-menu.png' if you use it
+// ];
 
+// function preloadImages(images, callback) {
+//   let loadedImages = 0;
+
+//   function onLoad() {
+//     loadedImages++;
+//     if (loadedImages === images.length) {
+//       callback();
+//     }
+//   }
+
+//   for (let i = 0; i < images.length; i++) {
+//     let img = new Image();
+//     img.onload = onLoad;
+//     img.src = images[i];
+//   }
+// }
+
+// preloadImages(imagePaths, () => {
+//   // This function will be executed after all images are loaded
+//   Game.initGame(); 
+// });
+Game.initGame();
 const resizeCanvas = () => {
 	const screenWidth = document.body.clientWidth;
 	const screenHeight = document.body.clientHeight;
