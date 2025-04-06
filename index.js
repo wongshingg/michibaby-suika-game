@@ -126,7 +126,7 @@ const Game = {
 		Runner.run(runner, engine);
 
 		Composite.add(engine.world, menuStatics);
-
+		
 		Game.loadHighscore();
 		Game.elements.ui.style.display = 'none';
 		Game.fruitsMerged = Array.apply(null, Array(Game.fruitSizes.length)).map(() => 0);
@@ -139,6 +139,7 @@ const Game = {
 			Events.off(mouseConstraint, 'mousedown', menuMouseDown);
 			Game.startGame();
 		}
+		Matter.World.add(engine.world, mouseConstraint);
 
 		Events.on(mouseConstraint, 'mousedown', menuMouseDown);
 	},
